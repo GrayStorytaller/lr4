@@ -1,7 +1,7 @@
 REST
-
+________________________________________
 Dockerfile
-__________________
+________________________________________
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /app
 
@@ -20,7 +20,7 @@ COPY --from=build-env /app/out .
 
 EXPOSE 80
 ENTRYPOINT ["dotnet", "RestApiWithDb.dll"]
-
+________________________________________
 Dockerfile описывает процесс создания и сборки образа Docker, который содержит необходимую среду для выполнения приложения. Данный Dockerfile предназначен для построения и запуска .NET приложения. Давайте разберём шаги этого Dockerfile:
 1. FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 •	FROM указывает базовый образ Docker. В данном случае используется образ .NET SDK версии 8.0.
@@ -48,8 +48,10 @@ Dockerfile описывает процесс создания и сборки о
 Таким образом, данный Dockerfile создаёт два этапа:
 1.	Сборка проекта .NET и подготовка файлов для публикации.
 2.	Запуск приложения внутри контейнера на базе ASP.NET.
+________________________________________
 
 Program.cs
+________________________________________
 using Microsoft.EntityFrameworkCore;
 using RestApiWithDb.Data;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
@@ -102,6 +104,8 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+________________________________________
 
 Этот код служит для создания и настройки веб-приложения с поддержкой SOAP и REST API с использованием ASP.NET Core. Давайте разберем каждый блок кода по порядку:
 1. using Microsoft.EntityFrameworkCore;
@@ -164,8 +168,9 @@ app.MapControllers();
 app.Run();
 •	Запускает веб-приложение.
 Таким образом, данный код создаёт веб-приложение с поддержкой SOAP, REST API, а также управляет взаимодействием с базой данных PostgreSQL.
-
+________________________________________
 docker-compose.yml
+________________________________________
 version: '3.8'
 services:
   api:
@@ -202,6 +207,7 @@ networks:
   app-network:
     driver: bridge
 
+________________________________________
 docker-compose.yml — это файл для управления многоконтейнерными приложениями с использованием Docker Compose. Он позволяет упрощенно управлять зависимостями между сервисами, установкой образов Docker и настройкой сети между ними. Давайте разберем каждый компонент данного файла:
 Основные блоки в docker-compose.yml
 ________________________________________
@@ -268,8 +274,9 @@ namespace RestApiWithDb.Models
 •	Quantity — целочисленное свойство для хранения количества товаров в заказе.
 4. public string Status { get; set; }
 •	Status — строковое свойство для хранения статуса заказа, например, "В обработке", "Отгружен", "Завершен" и т. д.
-
+________________________________________
 AppDbContext.cs
+________________________________________
 using Microsoft.EntityFrameworkCore;
 using RestApiWithDb.Models;
 
@@ -290,7 +297,7 @@ namespace RestApiWithDb.Data
         }
     }
 }
-
+________________________________________
 Код описывает контекст базы данных AppDbContext для работы с базой данных в .NET приложении с использованием Entity Framework Core. Давайте разберем каждую часть этого кода:
 1. using Microsoft.EntityFrameworkCore;
 •	Импортирует пространство имен Entity Framework Core, которое предоставляет инструменты для работы с базами данных.
@@ -317,8 +324,9 @@ protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 •	Если конфигурация не была задана, то в методе UseNpgsql устанавливается подключение к базе данных PostgreSQL с соответствующими параметрами: хост (Host=db), порт (Port=5432), имя базы данных (Database=restapi_db), имя пользователя (Username=postgres) и пароль (Password=postgres).
 Общий смысл
 Этот класс AppDbContext предоставляет доступ к модели данных Order и создает соединение с базой данных PostgreSQL. Все взаимодействие с базой данных будет происходить через этот контекст.
-
+________________________________________
 ValuesController.cs
+________________________________________
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RestApiWithDb.Data;
@@ -380,6 +388,7 @@ namespace RestApiWithDb.Controllers
     }
 }
 
+________________________________________
 Код представляет API контроллер для работы с заказами в приложении REST API с использованием ASP.NET Core. Давайте разберем каждую часть этого кода:
 1. using директивы
 using Microsoft.AspNetCore.Mvc;
@@ -475,8 +484,9 @@ public async Task<IActionResult> DeleteOrder(int id)
 •	Remove(order) удаляет заказ из базы данных.
 •	SaveChangesAsync() сохраняет изменения.
 •	NoContent() — возвращает пустой ответ с кодом состояния 204 No Content.
-
+________________________________________
 appsettings.json
+________________________________________
 {
   "ConnectionStrings": {
     "DefaultConnection": "Host=localhost;Port=5432;Database=restapi_db;Username=postgres;Password=postgres"
@@ -490,6 +500,7 @@ appsettings.json
   "AllowedHosts": "*"
 }
 
+________________________________________
 Этот JSON-конфигурационный файл используется для настройки приложения ASP.NET Core. Давайте рассмотрим каждую секцию более подробно:
 1. ConnectionStrings
 "ConnectionStrings": {
@@ -515,8 +526,9 @@ ________________________________________
 "AllowedHosts": "*"
 •	AllowedHosts — указывает, какие хосты разрешены для приложения.
 o	В данном случае указано "*" — это означает, что все хосты разрешены (неограниченно).
-
+________________________________________
 SOAP
+________________________________________
 IOrderService.cs
 using System.ServiceModel;
 using System.Threading.Tasks;
@@ -544,7 +556,7 @@ namespace RestApiWithDb.Services
         Task<bool> DeleteOrder(int id);
     }
 }
-
+________________________________________
 Этот код определяет SOAP-сервис для работы с заказами в системе. Интерфейс IOrderService описывает контракты (доступные методы) для взаимодействия с сервисом. Давайте разберем код:
 ________________________________________
 Ключевые элементы
@@ -586,8 +598,9 @@ o	Аргументы:
 	id — идентификатор заказа.
 o	Возвращает:
 	true, если удаление успешно, иначе false.
-
+________________________________________
 OrderService.cs
+________________________________________
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
@@ -653,7 +666,7 @@ namespace RestApiWithDb.Services
         }
     }
 }
-
+________________________________________
 Этот код реализует интерфейс IOrderService для обработки операций с заказами в базе данных. Разберем основные элементы:
 ________________________________________
 Класс OrderService
